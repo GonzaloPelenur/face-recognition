@@ -3,11 +3,12 @@ import cv2
 import requests
 import numpy as np
 import json
+import time
 
 FONT_THINCKNESS= 2
 FRAME_THICKNESS =3
 MODEL = "cnn"
-threshold = 3 #Num of encodings
+threshold = 15 #Num of encodings
 send_encodigns = []
 counter = 0
 url = 'http://127.0.0.1:5000/compare'
@@ -28,10 +29,11 @@ while True:
             counter+=1
         else:
             #send the encondings
-            print(send_encodigns)
             data = {'encodings':send_encodigns}
+            a = time.time()
             x = requests.post(url,data=json.dumps(data))
-            print(x)
+            print(x.text)
+            print(time.time()-a)
             #reset variables
             send_encodigns = []
             counter = 0

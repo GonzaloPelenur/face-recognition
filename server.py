@@ -47,17 +47,27 @@ def handle_request():
     req = json.loads(request.data)
     encodings = req['encodings']
     response = []
-    print(encoding)
     for i in encodings:
-        face_encodings = np.array(i)
-        recog = face_recognition.compare_faces(known_faces, face_encodings, TOLERANCE)
-        if True in recog:
-            match = str(known_id[recog.index(True)])
-            response.append(match)
-            print(f'Match found: {match}')
+        face_encoding = np.array(i)
+        results = face_recognition.compare_faces(known_faces, face_encoding, TOLERANCE)
+        match = None
 
+        if True in results:
+            match = str(known_id[results.index(True)])
+            #print(f'Match found: {match}')
+        else:
+            match = str(next_id)
+            next_id += 1
+            known_id.append(match)
+            known_faces.append(face_encoding)
+
+        if len(known_names) > int(match):
+            response.append(known_names[match]) 
+        else:
+            response.append('Unknown')
     
-    res = {"status": str(response)}
+    res = {"status": response}
+    print(res)
 
     return json.dumps(res)
 app.run()
