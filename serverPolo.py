@@ -30,10 +30,10 @@ known_names = []
 
 for name in os.listdir(KNOWN_FACES_DIR):
     print(name)
-    for filename in os.listdir(f'{KNOWN_FACES_DIR}\{name}'):
+    for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
         print(filename)
         encoding = pickle.load(
-            open(f'{KNOWN_FACES_DIR}\{name}\{filename}', 'rb'))
+            open(f'{KNOWN_FACES_DIR}/{name}/{filename}', 'rb'))
         known_faces.append(encoding)
         known_names.append(int(name))
 
