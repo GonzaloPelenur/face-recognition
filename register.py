@@ -6,8 +6,8 @@ import time
 import json
 
 KNOWN_FACES_DIR = 'known_faces'
-regiter_name = 'Nico'
-TOLERANCE = 0.6
+regiter_name = 'gon'
+TOLERANCE = 0.5
 FONT_THINCKNESS= 2
 FRAME_THICKNESS =3
 MODEL = "cnn"
@@ -25,8 +25,12 @@ for name in os.listdir(KNOWN_FACES_DIR):
         known_faces.append(encoding)
         known_id.append(int(name))
 
-with open('known_names.txt') as json_file:
-    known_names = json.load(json_file)
+try:
+    with open('known_names.txt') as json_file:
+        known_names = json.load(json_file)
+except:
+    print('except')
+    known_names = {}
 
 if len(known_id) > 0:
     next_id = max(known_id) + 1
@@ -36,6 +40,8 @@ else:
 print('processing unknown faces')
 while True:
     rect, image = video.read()
+    if not rect:
+        break
     
     locations = face_recognition.face_locations(image, model=MODEL)
     encodings = face_recognition.face_encodings(image, locations)

@@ -6,13 +6,18 @@ import time
 import json
 
 KNOWN_FACES_DIR = 'known_faces'
-TOLERANCE = 0.6
+TOLERANCE = 0.5
 FONT_THINCKNESS= 2
 FRAME_THICKNESS =3
 MODEL = "cnn"
+outName = 'videos/output2.mp4'
+record = False
 
+#video = cv2.VideoCapture('videos/compilation.mp4')
 video = cv2.VideoCapture(0)
 
+if record:
+    out = cv2.VideoWriter(outName,  cv2.VideoWriter_fourcc(*"MPNG"), int(video.get(cv2.CAP_PROP_FPS)),(int(video.get(cv2.CAP_PROP_FRAME_WIDTH)), int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))))
 print('loading known faces')
 
 known_faces = []
@@ -35,6 +40,8 @@ with open('known_names.txt') as json_file:
 print('processing unknown faces')
 while True:
     rect, image = video.read()
+    if not rect:
+        break
     
     locations = face_recognition.face_locations(image, model=MODEL)
     encodings = face_recognition.face_encodings(image, locations)
@@ -69,9 +76,13 @@ while True:
         cv2.rectangle(image, top_left, bottom_right, color, cv2.FILLED)
         cv2.putText(image, name, (face_location[3]+10, face_location[2]+15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255))
 
+    if record:
+        out.write(image)
     cv2.imshow('', image)
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
 cv2.destroyAllWindows()
 video.release()
+if record:
+    out.release()
