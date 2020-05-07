@@ -1,6 +1,8 @@
 import face_recognition
 import cv2
 import requests
+import numpy as np
+import json
 
 FONT_THINCKNESS= 2
 FRAME_THICKNESS =3
@@ -8,7 +10,7 @@ MODEL = "cnn"
 threshold = 3 #Num of encodings
 send_encodigns = []
 counter = 0
-url = ''
+url = 'http://127.0.0.1:5000/compare'
 
 video = cv2.VideoCapture(0)
 
@@ -22,12 +24,14 @@ while True:
 
     for face_encoding, face_location in zip(encodings, locations):
         if counter <= threshold:
-            send_encodigns.append(face_encoding)
+            send_encodigns.append(face_encoding.tolist())
             counter+=1
         else:
             #send the encondings
             print(send_encodigns)
-
+            data = {'encodings':send_encodigns}
+            x = requests.post(url,data=json.dumps(data))
+            print(x)
             #reset variables
             send_encodigns = []
             counter = 0
