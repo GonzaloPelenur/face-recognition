@@ -30,10 +30,11 @@ known_names = []
 
 for name in os.listdir(KNOWN_FACES_DIR):
     print(name)
-    for filename in os.listdir(f'{KNOWN_FACES_DIR}/{name}'):
-        print(filename)
+    dir = KNOWN_FACES_DIR+"/"+name
+    for filename in os.listdir(dir):
+        dir += "/"+filename
         encoding = pickle.load(
-            open(f'{KNOWN_FACES_DIR}/{name}/{filename}', 'rb'))
+            open(dir, 'rb'))
         known_faces.append(encoding)
         known_names.append(int(name))
 
@@ -45,17 +46,17 @@ else:
 
 @app.route("/compare", methods=["POST"])
 def handle_request():
-    req = json.loads(request.data)
+    req = json.loads(request.data.decode('utf-8'))
 
     results = []
     for i in req["data"]:
         recog = face_recognition.compare_faces(
             known_faces, np.array(i), TOLERANCE)
-        print(recog)
         if True in recog:
             match = str(known_names[recog.index(True)])
             results.append(match)
-            print(f'Match found: {match}')
+
+    print(results)
 
     res = {"status": str(results)}
 
