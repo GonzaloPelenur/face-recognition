@@ -22,6 +22,28 @@ def detect_faces(im_bytes):
     return face_locations
 
 
+def detect_faces_cascade(image, showCrop=False):
+    crops = []
+    face_cascade = cv2.CascadeClassifier(
+        'Cascades/haarcascade_frontalface_default.xml')
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    for (x, y, w, h) in faces:
+        # aca armar los crops y apendearlos
+        crop = np.copy(img)[y:y+h, x:x+h, :]
+        # im_arr: image in Numpy one-dim array format.
+        _, im_arr = cv2.imencode('.jpg', np.copy(crop))
+        im_bytes = im_arr.tobytes()
+        crops.append(im_bytes)
+        if showCrop:
+            cv2.imshow('crop', crop)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
+
+    return crops
+
+
 def crop_faces(image, face_locations):
     imwidth = len(image[0])
     imheight = len(image)

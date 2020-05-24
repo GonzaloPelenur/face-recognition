@@ -7,7 +7,7 @@ import base64
 
 
 # if convert is True it converts image into bytes
-def search_face_local(image, collectionId, convert=False):
+def search_face_local(image, collectionId, matches, convert=False):
     if(convert):
         retval, image = cv2.imencode('.jpg', image)
         image = base64.b64encode(image)
@@ -18,13 +18,18 @@ def search_face_local(image, collectionId, convert=False):
 
     client = boto3.client('rekognition')
 
-    response = client.search_faces_by_image(CollectionId=collectionId,
-                                            Image={'Bytes': image},
-                                            FaceMatchThreshold=threshold,
-                                            MaxFaces=maxFaces,
-                                            )
+    try:
+        response = client.search_faces_by_image(CollectionId=collectionId,
+                                                Image={'Bytes': image},
+                                                FaceMatchThreshold=threshold,
+                                                MaxFaces=maxFaces,
+                                                )
+        faceMatches = response['FaceMatches']
+        matches.append(faceMatches)
+    except:
+        print("no face found")
+        return []
 
-    faceMatches = response['FaceMatches']
     # print(faceMatches[0]["Face"]["ExternalImageId"])
     # print('Similarity: ' + "{:.2f}".format(faceMatches[0]['Similarity']) + "%")
 
@@ -32,10 +37,7 @@ def search_face_local(image, collectionId, convert=False):
     #     print('FaceId:' + match['Face']["ExternalImageId"])
     #     print('Similarity: ' + "{:.2f}".format(match['Similarity']) + "%")
     #     print
-    try:
-        return faceMatches[0]
-    except:
-        return []
+    return faceMatches[0]
 
 
 if __name__ == "__main__":
