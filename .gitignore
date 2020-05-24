@@ -1,4 +1,6 @@
-known_names.txt
-known_faces/
-videos/
+face_recog/known_names.txt
+face_recog/known_faces/
+face_recog/videos/
 rekog_polo/media
+rekog_gon/media
+rekog_gon/credentials.csv
