@@ -3,12 +3,10 @@ import csv
 import time
 import cv2
 import numpy as np
+import threading
 
-def search_faces_by_image(access_key_id, secret_access_key, source_bytes, collection_id, threshold=80, region="eu-west-1"):
-    rekognition = boto3.client('rekognition',
-                        region_name='us-east-1',
-                        aws_access_key_id=access_key_id,
-                        aws_secret_access_key=secret_access_key)
+def search_faces_by_image(rekognition, source_bytes, collection_id, threshold=80, region="eu-west-1"):
+    
     response = rekognition.search_faces_by_image(
 		Image={
             'Bytes': source_bytes
@@ -36,9 +34,6 @@ def detect_faces(im_path):
     for (x, y, w, h) in faces:
         #aca armar los crops y apendearlos
         crop = np.copy(img)[y:y+h,x:x+h,:]
-        cv2.imshow('img', crop)
-        cv2.waitKey()
-        cv2.destroyAllWindows()
         
         _, im_arr = cv2.imencode('.jpg', np.copy(crop))  # im_arr: image in Numpy one-dim array format.
         im_bytes = im_arr.tobytes()
@@ -56,11 +51,16 @@ def main():
         for line in reader:
             access_key_id = line[2]
             secret_access_key = line[3]
+    rekognition = boto3.client('rekognition',
+                        region_name='us-east-1',
+                        aws_access_key_id=access_key_id,
+                        aws_secret_access_key=secret_access_key)
 
     a = time.time()
     for source_bytes in detect_faces(im_path):
         #thread
-        search_faces_by_image(access_key_id, secret_access_key, source_bytes, COLLECTION)
+        thread = threading.Thread(target=search_faces_by_image, args=(rekognition, source_bytes, COLLECTION))
+        thread.start()
     print(time.time() - a)
 
 if __name__ == "__main__":
