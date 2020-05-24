@@ -7,7 +7,7 @@ import base64
 
 
 # if convert is True it converts image into bytes
-def search_face_local(image, collectionId, matches, convert=False):
+def search_face_local(image, collectionId, matches, location, convert=False):
     if(convert):
         retval, image = cv2.imencode('.jpg', image)
         image = base64.b64encode(image)
@@ -25,9 +25,9 @@ def search_face_local(image, collectionId, matches, convert=False):
                                                 MaxFaces=maxFaces,
                                                 )
         faceMatches = response['FaceMatches']
-        matches.append(faceMatches)
-    except:
-        print("no face found")
+        matches.append([faceMatches[0], location])
+    except Exception as e:
+        matches.append(["unknown", location])
         return []
 
     # print(faceMatches[0]["Face"]["ExternalImageId"])

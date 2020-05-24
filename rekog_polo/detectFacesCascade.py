@@ -53,10 +53,9 @@ def detect_faces_recog(image, showCrop=False):
     crops = []
 
     locations = face_recognition.face_locations(image, model="cnn")
-    print(locations)
     for (top, right, bottom, left) in locations:
         # aca armar los crops y apendearlos
-        crop = image[top:bottom, left:right]
+        crop = image[top-10:bottom+10, left-10:right+10]
         crops.append(crop)
         if showCrop:
             cv2.imshow('crop', crop)
@@ -66,9 +65,35 @@ def detect_faces_recog(image, showCrop=False):
     return crops, locations
 
 
+def display(image, matches):
+    for match in matches:
+        location = match[1]
+        try:
+            name = match[0]["Face"]["ExternalImageId"]
+        except:
+            name = ""
+
+        top_left = (location[3], location[0])
+        bottom_right = (location[1], location[2])
+        color = [0, 0, 0]
+        cv2.rectangle(image, top_left, bottom_right, color, 2)
+
+        top_left = (location[3], location[2])
+        bottom_right = (location[1], location[2]+22)
+        cv2.rectangle(image, top_left, bottom_right, color, cv2.FILLED)
+        cv2.putText(image, name, (location[3]+5, location[2]+15),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255))
+
+    cv2.imshow("recognition", image)
+
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+
+
 def main():
     threads = []
-    image = cv2.imread("media/todos.jpg")
+
+    image = cv2.imread("media/idtc2.jpg")
 
     crops, locations = detect_faces_recog(image, False)
 
@@ -79,41 +104,16 @@ def main():
     #     matches.append(match)
 
     # NOTE: with threading
-    for i in crops:
+    for crop, location in zip(crops, locations):
         thread = threading.Thread(
-            target=search_face_local, args=(i, "myfirstcollection", matches, True))
+            target=search_face_local, args=(crop, "myfirstcollection", matches, location, True))
         thread.start()
         threads.append(thread)
 
     for process in threads:
         process.join()
 
-    print(matches)
-    # for coords, match in zip(face_locations, matches):
-    #     leftBorder = int(coords["Left"]*imwidth)
-    #     rightBorder = int(coords["Left"]*imwidth) + \
-    #         int(coords["Width"]*imwidth)
-    #     topBorder = int(coords["Top"]*imheight)
-    #     bottomBorder = int(coords["Top"]*imheight) + \
-    #         int(coords["Height"]*imheight)
-    #     cv2.rectangle(image, (leftBorder, topBorder),
-    #                   (rightBorder, bottomBorder), [255, 255, 255], 2)
-
-    #     try:
-    #         name = match["Face"]["ExternalImageId"]
-    #     except:
-    #         name = ""
-
-    #     cv2.rectangle(image, (leftBorder, bottomBorder-20),
-    #                   (leftBorder+12*len(name), bottomBorder),
-    #                   [255, 255, 255], cv2.FILLED)
-    #     cv2.putText(image, name.upper(), (leftBorder + 5, bottomBorder-5),
-    #                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), thickness=1)
-
-    # cv2.imshow("a", image)
-
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    display(image, matches)
 
 
 if __name__ == "__main__":
