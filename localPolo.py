@@ -6,7 +6,7 @@ import time
 FONT_THINCKNESS = 2
 FRAME_THICKNESS = 3
 MODEL = "cnn"
-threshold = 3  # Num of encodings
+threshold = 15  # Num of encodings
 send_encodigns = []
 counter = 0
 url = ''
@@ -28,7 +28,7 @@ while True:
         else:
             # send the encondings
             a = time.time()
-            r = requests.post("http://127.0.0.1:5000/compare",
+            r = requests.post("http://147cb521.ngrok.io/compare",
                               data=json.dumps({"data": send_encodigns}))
             b = time.time()
 
