@@ -6,25 +6,28 @@ import numpy as np
 import threading
 
 def search_faces_by_image(rekognition, source_bytes, collection_id, threshold=80, region="eu-west-1"):
-    
-    response = rekognition.search_faces_by_image(
-		Image={
-            'Bytes': source_bytes
-		},
-		CollectionId=collection_id,
-		FaceMatchThreshold=threshold,
-        MaxFaces=1
-	)
+    try:
+        response = rekognition.search_faces_by_image(
+            Image={
+                'Bytes': source_bytes
+            },
+            CollectionId=collection_id,
+            FaceMatchThreshold=threshold,
+            MaxFaces=1
+        )
 
-    for record in response['FaceMatches']:
-        face = record['Face']
-        print(f"Matched Face {record['Similarity']}")
-        print(f"  FaceId : {face['FaceId']}")
-        print(f"  ImageId : {face['ExternalImageId']}")
-        print(f"  BoundingBox : {face['BoundingBox']}")
-    return response['FaceMatches']
+        for record in response['FaceMatches']:
+            face = record['Face']
+            print(f"Matched Face {record['Similarity']}")
+            print(f"  FaceId : {face['FaceId']}")
+            print(f"  ImageId : {face['ExternalImageId']}")
+            print(f"  BoundingBox : {face['BoundingBox']}")
+        return response['FaceMatches']
+    except:
+        print('There needs to be at least 1 face')
+        return -1
 
-def detect_faces(im_path):
+def detect_faces(im_path, showCrop=False):
     crops = []
     face_cascade = cv2.CascadeClassifier('Cascades/haarcascade_frontalface_default.xml')
     img = cv2.imread(im_path)
@@ -34,17 +37,19 @@ def detect_faces(im_path):
     for (x, y, w, h) in faces:
         #aca armar los crops y apendearlos
         crop = np.copy(img)[y:y+h,x:x+h,:]
-        
         _, im_arr = cv2.imencode('.jpg', np.copy(crop))  # im_arr: image in Numpy one-dim array format.
         im_bytes = im_arr.tobytes()
         crops.append(im_bytes)
+        if showCrop:
+            cv2.imshow('crop',crop)
+            cv2.waitKey(0)
+            cv2.destroyAllWindows()
 
     return crops
 
 def main():
     COLLECTION = "Collection"
-    im_path = 'media/elon&gon2.jpg'
-
+    im_path = 'media/elon2.jpg'
     with open('credentials.csv', 'r') as creds:
         next(creds)
         reader = csv.reader(creds)
@@ -56,12 +61,10 @@ def main():
                         aws_access_key_id=access_key_id,
                         aws_secret_access_key=secret_access_key)
 
-    a = time.time()
     for source_bytes in detect_faces(im_path):
         #thread
         thread = threading.Thread(target=search_faces_by_image, args=(rekognition, source_bytes, COLLECTION))
         thread.start()
-    print(time.time() - a)
 
 if __name__ == "__main__":
     main()
