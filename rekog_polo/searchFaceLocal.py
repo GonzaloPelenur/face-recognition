@@ -25,9 +25,9 @@ def search_face_local(image, collectionId, matches, location, convert=False):
                                                 MaxFaces=maxFaces,
                                                 )
         faceMatches = response['FaceMatches']
-        matches.append([faceMatches[0], location])
+        matches.append([faceMatches[0], location, image])
     except Exception as e:
-        matches.append(["unknown", location])
+        matches.append(["unknown", location, image])
         return []
 
     # print(faceMatches[0]["Face"]["ExternalImageId"])

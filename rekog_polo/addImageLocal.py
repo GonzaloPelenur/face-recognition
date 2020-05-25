@@ -6,12 +6,16 @@ import cv2
 import base64
 
 
-def add_faces_to_collection(im_bytes, collection_id, label):
+def add_faces_to_collection(image, collection_id, label, convert=False):
+    if(convert):
+        retval, image = cv2.imencode('.jpg', image)
+        image = base64.b64encode(image)
+        image = base64.decodebytes(image)
 
     client = boto3.client('rekognition')
 
     response = client.index_faces(CollectionId=collection_id,
-                                  Image={'Bytes': im_bytes},
+                                  Image={'Bytes': image},
                                   ExternalImageId=label,
                                   MaxFaces=3,
                                   QualityFilter="AUTO",
@@ -34,18 +38,17 @@ def add_faces_to_collection(im_bytes, collection_id, label):
 
 
 def main():
-    image = cv2.imread("media/todos.jpg")
+    image = cv2.imread("media/colo.jpg")
     # cv2.imshow("cena", image)
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
 
-    retval, im_bytes = cv2.imencode('.jpg', image)
-    im_bytes = base64.b64encode(im_bytes)
-    im_bytes = base64.decodebytes(im_bytes)
     label = "maxi_sucari"
     collection_id = "myfirstcollection"
+
     indexed_faces_count = add_faces_to_collection(
-        im_bytes, collection_id, label)
+        image, collection_id, label, True)
+
     print("Faces indexed count: " + str(indexed_faces_count))
 
 

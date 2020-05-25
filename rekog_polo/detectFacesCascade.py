@@ -10,7 +10,6 @@ import time
 import face_recognition
 import numpy as np
 import threading
-from multiprocessing.pool import ThreadPool
 
 
 def detect_faces(im_bytes):
