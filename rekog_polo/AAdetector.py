@@ -10,19 +10,6 @@ import numpy as np
 # (2, 3): x and y lower right corner
 
 
-def squares_touching(corner, car):
-    #print(corner, car)
-    touching = False
-    if car[0] < corner[2] and car[3] > corner[1]:
-        touching = True
-
-    return touching
-
-
-# RectA.Left < RectB.Right & & RectA.Right > RectB.Left & &
-# RectA.Top > RectB.Bottom & & RectA.Bottom < RectB.Top
-
-
 def get_args():
     parser = argparse.ArgumentParser(
         "EfficientDet: Scalable and Efficient Object Detection implementation by Signatrix GmbH")
@@ -94,5 +81,3 @@ def detector(image, image_size=512, cls_threshold=0.5, nms_threshold=0.5, pretra
 
 
 if __name__ == "__main__":
-    image = cv2.imread('car2.png')
-    print(carDetector(image))

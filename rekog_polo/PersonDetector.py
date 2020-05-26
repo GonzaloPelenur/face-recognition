@@ -15,6 +15,7 @@ while cap.isOpened():
 
         for detections in info:
             if (detections[0] is 'person') and detections[1] > 100000:
+                print(detections[2])
                 cv2.rectangle(image, (detections[2][0], detections[2][1]), (
                     detections[2][2], detections[2][3]), (0, 0, 0), 2)
 
