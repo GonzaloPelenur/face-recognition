@@ -6,3 +6,5 @@ rekog_gon/media
 rekog_gon/credentials.csv
 rekog_polo/trained_models
 rekog_polo/src
+rekog_cirelli/boca.py
+rekog_cirelli/__pycache__/
