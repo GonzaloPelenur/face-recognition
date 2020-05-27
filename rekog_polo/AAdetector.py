@@ -81,3 +81,4 @@ def detector(image, image_size=512, cls_threshold=0.5, nms_threshold=0.5, pretra
 
 
 if __name__ == "__main__":
+    exit()
