@@ -13,7 +13,6 @@ FONT_THINCKNESS = 2
 FRAME_THICKNESS = 3
 MODEL = "cnn"
 
-
 print('loading known faces')
 
 
@@ -22,12 +21,15 @@ print('processing unknown faces')
 
 def start():
     video = cv2.VideoCapture("media/videocolo.mp4")
+    frame = 0
+
     while video.isOpened():
         try:
             rect, image = video.read()
             image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
             locations = face_recognition.face_locations(image, model=MODEL)
-
+            frame += 1
+            print(frame)
             for face_location in locations:
 
                 match = None
@@ -42,7 +44,8 @@ def start():
 
             # if cv2.waitKey(1) & 0xFF == ord('q'):
             #     break
-        except:
+        except Exception as e:
+            print(e)
             break
 
 
