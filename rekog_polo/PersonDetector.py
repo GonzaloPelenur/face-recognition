@@ -22,13 +22,13 @@ def start(video=0, frameRate=15):
             for detections in info:
                 if (detections[0] is 'person') and detections[1] > 100000:
 
-                    print(detections[2])
-                    cv2.rectangle(image, (detections[2][0], detections[2][1]), (
-                        detections[2][2], detections[2][3]), (0, 0, 0), 2)
+                    # print(detections[2])
+                    # cv2.rectangle(image, (detections[2][0], detections[2][1]), (
+                    #     detections[2][2], detections[2][3]), (0, 0, 0), 2)
 
-        #cv2.imshow('frame', image)
-        # if cv2.waitKey(1) & 0xFF == ord('q'):
-        #     break
+                    #cv2.imshow('frame', image)
+                    # if cv2.waitKey(1) & 0xFF == ord('q'):
+                    #     break
 
 
 if __name__ == "__main__":
