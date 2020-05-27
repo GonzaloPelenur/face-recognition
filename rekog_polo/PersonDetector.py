@@ -32,12 +32,7 @@ def start(video=0, frameRate=15):
 
 
 if __name__ == "__main__":
-    frate = 1
-    a = time.time()
-    start("media/videocolo.mp4", frate)
-    print("Detection framerate =", frate, "Time:", time.time()-a)
-
-    frate = 3
+    frate = 15
     a = time.time()
     start("media/videocolo.mp4", frate)
     print("Detection framerate =", frate, "Time:", time.time()-a)
@@ -47,7 +42,12 @@ if __name__ == "__main__":
     start("media/videocolo.mp4", frate)
     print("Detection framerate =", frate, "Time:", time.time()-a)
 
-    frate = 15
+    frate = 3
+    a = time.time()
+    start("media/videocolo.mp4", frate)
+    print("Detection framerate =", frate, "Time:", time.time()-a)
+
+    frate = 1
     a = time.time()
     start("media/videocolo.mp4", frate)
     print("Detection framerate =", frate, "Time:", time.time()-a)
